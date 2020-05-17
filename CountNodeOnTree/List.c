@@ -60,9 +60,11 @@ void freeList(List * list)
 		return ;
 	}
 
-	for(Item * temp = list->tail; temp != NULL; temp = temp->prev)
+	while(list->head != NULL)
 	{
-		Item * item = temp;
+		Item * item = list->head;
+
+		list->head = list->head->next;
 
 		item->free(item);
 		item = NULL;
