@@ -14,6 +14,7 @@ typedef struct List
 	void (*init)(struct List *);
 	int (*isEmpty)(struct List *);
 	int (*size)(struct List *);
+	void (*clear)(struct List *);
 	void (*free)(struct List *);
 
 	int (*pushFront)(struct List *, Item *);
@@ -25,6 +26,9 @@ typedef struct List
 	Item * (*peekFront)(struct List *);
 	Item * (*peekRear)(struct List *);
 
+	int (*pushData)(struct List *, int, int);
+	Item * (*searchData)(struct List *, int);
+
 	void (*display)(struct List *);
 	
 }List;
@@ -34,6 +38,7 @@ List * createList();
 void initList(List *);
 int isEmptyList(List *);
 int size(List *);
+void clearList(List *);
 void freeList(List *);
 
 int pushFront(List *, Item *);
@@ -44,6 +49,9 @@ int popRear(List *);
 
 Item * peekFront(List *);
 Item * peekRear(List *);
+
+int pushData(struct List *, int, int);
+Item * searchData(struct List *, int);
 
 void displayList(List *);
 

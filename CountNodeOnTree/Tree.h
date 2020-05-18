@@ -13,12 +13,11 @@ typedef struct Tree
 
 	void (*init)(struct Tree *);
 	int (*isEmpty)(struct Tree *);
-	void (*setRoot)(struct Tree *, int);
+	void (*setRoot)(struct Tree *, List *, int);
 
 	int (*addNode)(struct Tree *, int, int);
 
-	Node * (*searchData)(struct Tree *, int);
-	int (*countNode)(struct Tree *, int);
+	int (*countNode)(struct Tree *, List *, int);
 
 	void (*display)(struct Tree *);
 }Tree;
@@ -27,12 +26,11 @@ Tree * createTree();
 
 void initTree(Tree *);
 int isEmptyTree(Tree *);
-void setRoot(Tree *, int); 
+void setRoot(Tree *, List *, int); 
 
 int addNode(Tree *, int, int);
 
-Node * searchData(Tree *, int);
-int countNode(Tree *, int);
+int countNode(Tree *, List *, int);
 
 void displayTree(Tree *);
 
