@@ -10,6 +10,7 @@ typedef struct Node
 	int countChild;
 	struct Node * parent;
 	struct Node ** child;
+	int totalNode;
 
 	void (*init)(struct Node *, int);
 	
@@ -18,9 +19,10 @@ typedef struct Node
 	struct Node * (*swapRelation)(struct Node *, struct Node *);
 
 	void (*display)(struct Node *);
+	void (*displayChild)(struct Node *);
 }Node;
 
-Node * createNode(Node *, int);
+Node * createNode(int);
 
 void initNode(Node *, int);
 
@@ -29,5 +31,6 @@ int setParent(Node *, Node *);
 Node * swapRelation(Node *, Node *);
 
 void displayNode(Node *);
+void displayChild(Node *);
 
 #endif

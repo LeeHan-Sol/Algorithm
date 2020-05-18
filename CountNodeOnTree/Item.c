@@ -32,5 +32,10 @@ void freeItem(Item * item)
 
 void displayItem(Item * item)
 {
-	printf("%4d[%p] [%p] [%p]\n", item->node->data, item, item->prev, item->next);
+//	printf("%4d[%p] [%p] [%p]\n", item->node->data, item, item->prev, item->next);
+
+	item->node->display(item->node);
+	fprintf(stdout, "[%p] [%p] [%p]\n", item, item->prev, item->next);
+	item->node->displayChild(item->node);
+	puts("");
 }

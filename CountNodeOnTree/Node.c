@@ -1,12 +1,11 @@
 #include "Node.h"
 
-Node * createNode(Node * parentNode, int data)
+Node * createNode(int data)
 {
 	Node * newNode = (Node *)malloc(sizeof(Node));
 
 	newNode->init = initNode;
 	newNode->init(newNode, data);
-	newNode->parent = parentNode;
 
 	return newNode;
 }
@@ -17,12 +16,14 @@ void initNode(Node * node, int data)
 	node->countChild = 0;
 	node->parent = NULL;
 	node->child = NULL;
+	node->totalNode = 1;
 
 	node->addConnection = addConnection;
 	node->setParent = setParent;
 	node->swapRelation = swapRelation;
 
 	node->display = displayNode;
+	node->displayChild = displayChild;
 }
 
 int addConnection(Node * uNode, Node * vNode)
@@ -35,7 +36,7 @@ int addConnection(Node * uNode, Node * vNode)
 		uNode->child = (Node **)malloc(sizeof(Node *));
 		if(uNode->child == NULL)
 		{
-			puts("ERROR : Node.c addConnection() (Node **)malloc()");
+//			puts("ERROR : Node.c addConnection() (Node **)malloc()");
 			return 1;
 		}
 	}
@@ -44,7 +45,7 @@ int addConnection(Node * uNode, Node * vNode)
 		uNode->child = realloc(uNode->child, sizeof(Node *) * uNode->countChild);
 		if(uNode->child == NULL)
 		{
-			puts("ERROR : Node.c addConnection() (Node **)realloc()");
+//			puts("ERROR : Node.c addConnection() (Node **)realloc()");
 			return 1;
 		}
 	}
@@ -52,7 +53,7 @@ int addConnection(Node * uNode, Node * vNode)
 	uNode->child[uNode->countChild - 1] = (Node *)malloc(sizeof(Node));
 	if(uNode->child[uNode->countChild - 1] == NULL)
 	{
-		puts("ERROR : Node.c addConnection() (Node *)malloc()");
+//		puts("ERROR : Node.c addConnection() (Node *)malloc()");
 		return 2;
 	}
 
@@ -63,21 +64,8 @@ int addConnection(Node * uNode, Node * vNode)
 
 int setParent(Node * uNode, Node * vNode)
 {
-	//return 0: 정상종료, 1: 부모를 정할 수 없음
-	if(vNode->parent == NULL)
-	{
-		vNode->parent = uNode;
-	}
-	else if(uNode->parent == NULL)
-	{
-		uNode->parent = vNode;
-	}
-	else
-	{
-		puts("ERROR : Node.c setParent() 부모를 정할 수 없습니다.\n");
-		return 1;
-	}
-	
+	vNode->parent = uNode;
+
 	return 0;
 }
 
@@ -108,4 +96,13 @@ void displayNode(Node * node)
 		printf("부모 : %d\n", node->parent->data);
 	else
 		puts("");
+}
+
+void displayChild(Node * node)
+{
+	for(int i = 0; i < node->countChild; i++)
+	{
+		fprintf(stdout, "%4d", node->child[i]->data);
+	}
+	puts("");
 }

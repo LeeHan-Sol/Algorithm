@@ -17,6 +17,7 @@ void initList(List * list)
 
 	list->isEmpty = isEmptyList;
 	list->size = size;
+	list->clear = clearList;
 	list->free = freeList;
 
 	list->pushFront = pushFront;
@@ -27,6 +28,9 @@ void initList(List * list)
 
 	list->peekFront = peekFront;
 	list->peekRear = peekRear;
+
+	list->pushData = pushData;
+	list->searchData = searchData;
 
 	list->display = displayList;
 }
@@ -40,7 +44,7 @@ int size(List * list)
 {
 	if(list->isEmpty(list))
 	{
-		puts("list가 비었습니다.");
+//		puts("list가 비었습니다.");
 		return 0;
 	}
 
@@ -51,6 +55,18 @@ int size(List * list)
 	}
 	
 	return count;
+}
+
+void clearList(List * list)
+{
+	if(list->isEmpty(list))
+	{
+		return ;
+	}
+
+	list->head = list->tail = NULL;
+
+	return ;
 }
 
 void freeList(List * list)
@@ -73,6 +89,8 @@ void freeList(List * list)
 	list->head = list->tail = NULL;
 
 	free(list);
+
+	return ;
 }
 
 int pushFront(List * list, Item * item)
@@ -80,6 +98,8 @@ int pushFront(List * list, Item * item)
 	if(list->isEmpty(list))
 	{
 		list->head = list->tail = item;
+		list->head->prev = NULL;
+		list->tail->next = NULL;
 
 		return 0;
 	}	
@@ -111,7 +131,7 @@ int popFront(List * list)
 {
 	if(list->isEmpty(list))
 	{
-		puts("popFront() list가 비어있습니다.");
+//		puts("popFront() list가 비어있습니다.");
 
 		return 1;
 	}
@@ -121,8 +141,10 @@ int popFront(List * list)
 	if(list->head == list->tail)
 	{
 		item->free(item);
+		item = NULL;
 
 		list->head = list->tail = NULL;
+
 		return 0;
 	}
 
@@ -139,7 +161,7 @@ int popRear(List * list)
 {
 	if(list->isEmpty(list))
 	{
-		puts("popRear() list가 비어있습니다.");
+//		puts("popRear() list가 비어있습니다.");
 		
 		return 0;
 	}
@@ -178,12 +200,51 @@ Item * peekRear(List * list)
 {
 	if(list->isEmpty(list))
 	{
-		puts("peekRear() list가 비어있습니다.");
+//		puts("peekRear() list가 비어있습니다.");
 
 		return (Item *)NULL;
 	}
 
 	return list->tail;
+}
+
+int pushData(List * list, int u, int v)
+{
+	Item * uItem = searchData(list, u);
+	if(uItem == NULL)
+	{
+		uItem = createItem(createNode(u));
+		list->pushRear(list, uItem);
+	}
+
+	Item * vItem = searchData(list, v);
+	if(vItem == NULL)
+	{
+		vItem = createItem(createNode(v));
+		list->pushRear(list, vItem);
+	}
+
+	uItem->node->addConnection(uItem->node, vItem->node);
+	vItem->node->addConnection(vItem->node, uItem->node);
+	
+	return 0;
+}
+
+Item * searchData(List * list, int data)
+{
+	if(list->isEmpty(list))
+	{
+//		puts("List.c searchData() list가 비어있습니다.");
+		return (Item *)NULL;
+	}
+
+	for(Item * temp = list->head; temp != NULL; temp = temp->next)
+	{
+		if(temp->node->data == data)
+			return temp;
+	}
+
+	return (Item *)NULL;
 }
 
 void displayList(List * list)
@@ -199,4 +260,6 @@ void displayList(List * list)
 	{
 		temp->display(temp);
 	}
+	
+	return ;
 }

@@ -17,9 +17,6 @@ void initTree(Tree * tree)
 	tree->isEmpty = isEmptyTree;
 	tree->setRoot = setRoot;
 
-	tree->addNode = addNode;
-
-	tree->searchData = searchData;
 	tree->countNode = countNode;
 
 	tree->display = displayTree;
@@ -30,128 +27,74 @@ int isEmptyTree(Tree * tree)
 	return tree->root == NULL ? 1 : 0;
 }
 
-void setRoot(Tree * tree, int data)
+void setRoot(Tree * tree, List * list, int data)
 {
-	Node * node = tree->searchData(tree, data);
+	Item * item = NULL;
 
-	if(node->parent == NULL)
-		tree->root = node;
-	else
+	if(list->searchData(list, data) == NULL)
 	{
-		tree->root = node->swapRelation(node, node->parent);	
+		return ;
 	}
 
-	node->parent = NULL;
-}
-
-int addNode(Tree * tree, int u, int v)
-{	
-	Node * uNode = searchData(tree, u);
-	if(uNode == NULL)
-	{
-		uNode = createNode(uNode, u);
-	}
-
-	Node * vNode = searchData(tree, v);
-	if(vNode == NULL)
-	{
-		vNode = createNode(vNode, v);
-	}
-
-	if(tree->isEmpty(tree))
-	{
-		tree->root = uNode;
-	}
-
-	uNode->addConnection(uNode, vNode);
-	vNode->addConnection(vNode, uNode);
-
-	uNode->setParent(uNode, vNode);
-
-	return 0;
-}
-
-Node * searchData(Tree * tree, int data)
-{
-	if(tree->isEmpty(tree))
-	{
-//		fprintf(stdout, "Tree.c searchData() tree가 비어있습니다.\n");
-		return (Node *)NULL;
-	}
-
-	Item * item = createItem(tree->root);
-	List * list = createList();
+	item = list->searchData(list, data);
+	tree->root = item->node;
+	tree->root->parent = NULL;
+	
+	list->clear(list);
 
 	list->pushFront(list, item);
 
-	while((item = list->peekFront(list)) != NULL)
+	for(item = list->head; item != NULL; item = item->next)
 	{
-		if(item->node->data == data)
-		{
-			Node * temp = item->node;
-			
-			list->free(list);
-
-			return temp;
-		}
-	
 		for(int i = 0; i < item->node->countChild; i++)
 		{
 			if(item->node->child[i] != item->node->parent)
-				list->pushRear(list, createItem(item->node->child[i]));
-		}
-		
-		list->popFront(list);
-	}
-	
-	return (Node *)NULL;
-}
-
-int countNode(Tree * tree, int data)
-{
-	if(tree->isEmpty(tree))
-	{
-		puts("Tree.c countNode() tree가 비어있습니다.");
-		return 0;
-	}
-
-	Node * tempRoot = searchData(tree, data);
-	if(tempRoot == NULL)
-	{
-		puts("Tree.c countNode() %d 데이터를 찾을 수 없습니다.");
-		return 0;
-	}
-
-	int count = 0;
-
-	List * list = createList();
-
-	list->pushFront(list, createItem(tempRoot));
-
-	Item * temp = NULL;
-
-	while((temp = list->peekFront(list)) != NULL)
-	{
-		for(int i = 0; i < temp->node->countChild; i++)
-		{
-			if(temp->node->child[i] != temp->node->parent)
 			{
-				list->pushRear(list, createItem(temp->node->child[i]));
+				item->node->child[i]->setParent(item->node, item->node->child[i]);
+				list->pushRear(list, createItem(item->node->child[i]));
 			}
 		}
-
-		list->popFront(list);
-		count++;
-	}
 		
-		return count;
+//		list->popFront(list);
+	}
+
+//	list->display(list);
+//	puts("");
+
+//	fprintf(stdout, "list->tail : %d [%p]\n", list->tail->node->data, list->tail);
+	for(item = list->tail; item != NULL; item = item->prev)
+	{
+//			fprintf(stdout, "item->node, item, item->prev, item->next : %d [%p], [%p], [%p], [%p]\n", item->node->data, item->node, item, item->prev, item->next);
+		if(item->node->countChild == 0)
+		{
+			item->node->parent->totalNode++;
+		}
+		else
+		{
+			if(item->node->parent != NULL)
+				item->node->parent->totalNode += item->node->totalNode;
+		}
+		
+//		if(item->node->parent != NULL)
+//			fprintf(stdout, "item->node->parent & ->totalNode : %d, %d\n", item->node->parent->data, item->node->parent->totalNode);
+//		puts("");
+	}
+	
+	return ;
+}
+
+int countNode(Tree * tree, List * list, int data)
+{
+	Item * item = list->searchData(list, data);
+
+	return item->node->totalNode;
 }
 
 void displayTree(Tree * tree)
 {
 	if(tree->isEmpty(tree))
 	{
-		fprintf(stdout, "tree가 비었습니다.\n");
+//		fprintf(stdout, "tree가 비었습니다.\n");
 		return ;
 	}
 
