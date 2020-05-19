@@ -65,7 +65,7 @@ int main()
 		}
 	}
 
-	while(stack->size(stack))
+	while(stack->top(stack) != -1)
 	{
 		sum += stack->pop(stack);
 	}
