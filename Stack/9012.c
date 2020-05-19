@@ -1,4 +1,4 @@
-//제로
+//괄호
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,9 +25,11 @@ typedef struct Stack
 
 	void (*push)(struct Stack *, int);
 	int (*pop)(struct Stack *);
+	void (*clear)(struct Stack *);
 	int (*size)(struct Stack *);
 	int (*isEmpty)(struct Stack *);
 	int (*top)(struct Stack *);
+	void (*display)(struct Stack *);
 }Stack;
 
 Stack * createStack();
@@ -36,41 +38,76 @@ void freeStack(Stack *);
 
 void push(Stack *, int);
 int pop(Stack *);
+void clearStack(Stack *);
 int size(Stack *);
 int isEmptyStack(Stack *);
 int top(Stack *);
+void displayStack(Stack *);
 
 int main()
 {
-	int n = 0, sum = 0;
-
+	int n = 0;
+	
 	scanf("%d", &n);
 	getchar();
+
+	int * result = (int *)malloc(sizeof(int) * n);
+	memset(result, 0, n);
+
+	char ** string = (char **)malloc(sizeof(char *) * n);
+	if(string == NULL) return 0;
+
+	for(int i = 0; i < n; i++)
+	{
+		*(string + i) = (char *)malloc(sizeof(char) * 52); 
+		if(*(string + i) == NULL) return 0;
+		memset(*(string + i), 0, 52);
+	}
 
 	Stack * stack = createStack();
 
 	for(int i = 0; i < n; i++)
 	{
-		int integer = 0;
-		scanf("%d", &integer);
-		getchar();
-
-		if(integer != 0)
-		{
-			stack->push(stack, integer);
-		}
-		else if(integer == 0)
-		{
-			stack->pop(stack);
-		}
+		fgets((*(string + i)), 52, stdin);
+		int length = strlen((*(string + i))) - 1;
+		if(length < 2 || length > 50) return 0;
+//		*(*(string + i) + strlen(*(string + i)) - 1) = 0x00;
 	}
 
-	while(stack->size)
+	for(int i = 0; i < n; i++)
 	{
-		sum += stack->pop(stack);
+		int length = strlen((*(string + i))) - 1;
+		for(int j = 0; j < length; j++)
+		{
+			if(strncmp((*(string + i) + j), "(", 1) == 0)
+			{
+				stack->push(stack, 0);
+			}
+			else
+			{
+				if(stack->top(stack) == 0) stack->pop(stack);
+				else stack->push(stack, 1);
+			}
+		}
+
+		if(stack->top(stack) == -1)
+		{
+			*(result + i) = 1;
+		}
+		else
+		{
+			*(result + i) = 0;
+		}
+
+		stack->clear(stack);
 	}
 
-	fprintf(stdout, "%d\n", sum);
+	for(int i = 0; i < n; i++)
+	{
+		if(*(result + i) == 1) fprintf(stdout, "YES");
+		else fprintf(stdout, "NO");
+		fprintf(stdout, "\n");
+	}
 
 	stack->free(stack);
 
@@ -128,6 +165,8 @@ void initStack(Stack * stack)
 	stack->size = size;
 	stack->isEmpty = isEmptyStack;
 	stack->top = top;
+	stack->clear = clearStack;
+	stack->display = displayStack;
 
 	return ;
 }
@@ -178,7 +217,7 @@ int pop(Stack * stack)
 {
 	if(stack->isEmpty(stack))
 	{
-		return 0;
+		return -1;
 	}
 
 	int pop = 0;
@@ -189,9 +228,25 @@ int pop(Stack * stack)
 
 	node->free(node);
 	node = NULL;
-	
 
 	return pop;
+}
+
+void clearStack(Stack * stack)
+{
+	if(stack->isEmpty(stack))
+	{
+		return ;
+	}
+
+	for(int i = stack->size(stack); i > 0; i--)
+	{
+		stack->pop(stack);
+	}
+	
+	stack->head = NULL;
+	
+	return ;
 }
 
 int size(Stack * stack)
@@ -223,4 +278,20 @@ int top(Stack * stack)
 	}
 
 	return stack->head->data; 
+}
+
+void displayStack(Stack * stack)
+{
+	if(stack->isEmpty(stack))
+	{
+		fprintf(stdout, "stack이 비어있습니다.");
+	}
+
+	for(Node * node = stack->head; node != NULL; node = node->next)
+	{
+		fprintf(stdout, "%4d", node->data);
+	}
+	puts("");
+
+	return ;
 }
