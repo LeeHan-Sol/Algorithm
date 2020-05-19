@@ -13,7 +13,7 @@ typedef struct Tree
 
 	void (*init)(struct Tree *);
 	int (*isEmpty)(struct Tree *);
-	void (*setRoot)(struct Tree *, List *, int);
+	void (*setRoot)(struct Tree *, List *, int *, int);
 
 	int (*addNode)(struct Tree *, int, int);
 
@@ -26,7 +26,7 @@ Tree * createTree();
 
 void initTree(Tree *);
 int isEmptyTree(Tree *);
-void setRoot(Tree *, List *, int); 
+void setRoot(Tree *, List *, int *, int); 
 
 int addNode(Tree *, int, int);
 

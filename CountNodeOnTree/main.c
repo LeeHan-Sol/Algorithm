@@ -12,6 +12,12 @@ int main()
 		return 0;
 	}
 
+	int * countNode = (int *)malloc(sizeof(int) * n);
+	if(countNode == NULL)
+	{
+		return 0;
+	}
+
 	for(int i = 0; i < n - 1; i++)
 	{
 		int u = 0, v = 0;
@@ -25,7 +31,7 @@ int main()
 
 	Tree * tree = createTree();
 	
-	tree->setRoot(tree, list, r);
+	tree->setRoot(tree, list, countNode, r);
 //	fprintf(stdout, "tree->root : %d\n", tree->root->data);
 
 //	list->display(list);
@@ -41,7 +47,7 @@ int main()
 
 	for(int i = 0; i < q; i++)
 	{
-		int count = tree->countNode(tree, list, *(quary + i));
+		int count = countNode[*(quary + i) - 1];
 		fprintf(stdout, "%d\n", count);
 	}
 

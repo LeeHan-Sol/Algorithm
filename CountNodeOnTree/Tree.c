@@ -27,7 +27,7 @@ int isEmptyTree(Tree * tree)
 	return tree->root == NULL ? 1 : 0;
 }
 
-void setRoot(Tree * tree, List * list, int data)
+void setRoot(Tree * tree, List * list, int * countNode, int data)
 {
 	Item * item = NULL;
 
@@ -78,6 +78,7 @@ void setRoot(Tree * tree, List * list, int data)
 //		if(item->node->parent != NULL)
 //			fprintf(stdout, "item->node->parent & ->totalNode : %d, %d\n", item->node->parent->data, item->node->parent->totalNode);
 //		puts("");
+		countNode[item->node->data - 1] = item->node->totalNode;
 	}
 	
 	return ;
