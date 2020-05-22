@@ -47,49 +47,30 @@ int back(List *);
 
 int main()
 {
+	List * list = createList();
 	int n = 0;
 
 	scanf("%d", &n);
-	getchar();
-	if(1 > n || n > 2000000) return 0;
-
-	char * buffer = (char *)malloc(sizeof(char) * 16);
+	if(1 > n || n > 500000)
+		return 0;
 	
-	List * list = createList();
-
 	for(int i = 0; i < n; i++)
 	{
-		fgets(buffer, 16, stdin);
+		list->push(list, i + 1);
+	}
 
-		if(strncmp(buffer, "push ", 5) == 0)
-		{
-			list->push(list, atoi(buffer + 5));
-		}
+	for(;;)
+	{
+		if(list->count != 1)
+			list->pop(list);
+
+		if(list->count != 1)
+			list->push(list, list->pop(list));
 		else
 		{
-			if(strncmp(buffer, "front", 5) == 0)
-			{
-				fprintf(stdout, "%d\n", list->front(list));
-			}
-			else if(strncmp(buffer, "back", 4) == 0)
-			{
-				fprintf(stdout, "%d\n", list->back(list));
-			}
-			else if(strncmp(buffer, "size", 4) == 0)
-			{
-				fprintf(stdout, "%d\n", list->size(list));
-			}
-			else if(strncmp(buffer, "pop", 3) == 0)
-			{
-				fprintf(stdout, "%d\n", list->pop(list));
-			}
-			else if(strncmp(buffer, "empty", 5) == 0)
-			{
-				fprintf(stdout, "%d\n", list->isEmpty(list));
-			}
+			fprintf(stdout, "%d\n", list->pop(list));
+			break;
 		}
-		
-		memset(buffer, 0, 16);
 	}
 
 	list->free(list);
