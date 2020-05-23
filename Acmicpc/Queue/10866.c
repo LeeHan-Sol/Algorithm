@@ -61,7 +61,7 @@ int main()
 	getchar();
 	if(1 > n || n > 10000)
 		return 0;
-	fprintf(stdout, "\t\tn : %d\n", n);
+//	fprintf(stdout, "\t\tn : %d\n", n);
 
 	char * buffer = (char *)malloc(sizeof(char) * 32);
 
@@ -73,7 +73,7 @@ int main()
 		{
 			int integer = atoi(buffer + 11);
 			if(1 > integer || integer > 100000) return 0;
-			fprintf(stdout, "\t\tinteger : %d\n", integer);
+//			fprintf(stdout, "\t\tinteger : %d\n", integer);
 
 			list->pushFront(list, integer);
 		}
@@ -81,7 +81,7 @@ int main()
 		{
 			int integer = atoi(buffer + 10);
 			if(1 > integer || integer > 100000) return 0;
-			fprintf(stdout, "\t\tinteger : %d\n", integer);
+//			fprintf(stdout, "\t\tinteger : %d\n", integer);
 
 			list->pushBack(list, integer);
 		}
