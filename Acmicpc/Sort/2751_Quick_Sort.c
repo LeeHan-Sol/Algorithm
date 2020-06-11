@@ -37,8 +37,8 @@ void displayArray(int * array, int size)
 //	fputs("array 항목\n", stdout);
 	for(int i = 0; i < size; i++)
 	{
-//		fprintf(stdout, "%3d", *(array + i));
-		fprintf(stdout, "%d\n", *(array + i));
+		fprintf(stdout, "%3d", *(array + i));
+//		fprintf(stdout, "%d\n", *(array + i));
 	}
 	fputc('\n', stdout);
 	
@@ -52,7 +52,7 @@ void sort(int * array, int size, int left, int right)
 	int pivot = *(array + left);
 	int row = left++;
 	int high = right;
-//	fprintf(stdout, "pivot, row, high : %d] %d, %d\n\n", pivot, row, high);
+	fprintf(stdout, "pivot, row, high : %d] %d, %d\n", pivot, row, high);
 
 	for(; left <= right;)
 	{
@@ -66,9 +66,9 @@ void sort(int * array, int size, int left, int right)
 		if(*(array + right) > pivot) right--;
 	}
 
+	fprintf(stdout, "left, right : %d, %d\n\n", left, right);
 	swap(array + right, array + row);
-//	displayArray(array, size);
-//	fprintf(stdout, "left, right : %d, %d\n", left, right);
+	displayArray(array, size);
 
 	sort(array, size, row, right - 1);
 	sort(array, size, left, high);
