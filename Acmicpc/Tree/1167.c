@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct Node
 {
@@ -55,6 +56,7 @@ typedef struct AdjGraph
 	int (*isEmpty)(struct AdjGraph * adjGraph);
 	void (*display)(struct AdjGraph * adjGraph);
 	void (*insert)(struct AdjGraph * adjGraph, int u, int weight, int v);
+	int (*radiusOfTree)(struct AdjGraph * adjGraph);
 }AdjGraph;
 
 AdjGraph * createAdjGraph(int size);
@@ -62,6 +64,7 @@ void initAdjGraph(AdjGraph * adjGraph, int size);
 int isEmptyAdjGraph(AdjGraph * adjGraph);
 void displayAdjGraph(AdjGraph * adjGraph);
 void insert(AdjGraph * adjGraph, int u, int v, int weight);
+int radiusOfTree(AdjGraph * adjGraph);
 
 int main()
 {
@@ -92,49 +95,9 @@ int main()
 		}
 	}
 
-	adjGraph->display(adjGraph);
+//	adjGraph->display(adjGraph);
 
-//	List * list = createList();
-//
-//	for(int i = 0; i < 10; i++)
-//	{
-//		list->pushFront(list, i, 1);
-//	}
-//	for(int i = 1; i < 10; i++)
-//	{
-//		list->pushRear(list, i, 1);
-//	}
-//	list->display(list);
-//	list->rDisplay(list);
-//	
-//	for(int i = 0; i < 10; i++)
-//	{
-//		list->popFront(list);
-//	}
-//	list->display(list);
-//	list->rDisplay(list);
-//	
-//	for(int i = 0; i < 10; i++)
-//	{
-//		list->popRear(list);
-//	}
-//	list->display(list);
-//	list->rDisplay(list);
-//	
-//	for(int i = 0; i < 5; i++)
-//	{
-//		list->pushRear(list, i, 1);
-//	}
-//	for(int i = 0; i < 3; i++)
-//	{
-//		list->popFront(list);
-//	}
-//	for(int i = 0; i < 2; i++)
-//	{
-//		list->popFront(list);
-//	}
-//	list->display(list);
-//	list->rDisplay(list);
+	fprintf(stdout, "%d\n", adjGraph->radiusOfTree(adjGraph));
 
 	return 0;
 }
@@ -292,7 +255,7 @@ int popFront(List * list)
 		return -1;
 	}
 
-	int result = *((int *)list->head);
+	int result = *((int *)list->head->data);
 	Node * temp = list->head;
 	list->head = list->head->next;
 	list->size--;
@@ -317,7 +280,7 @@ int popRear(List * list)
 		return -1;
 	}
 
-	int result = *((int *)list->tail);
+	int result = *((int *)list->tail->data);
 	Node * temp = list->tail;
 	list->tail = list->tail->prev;
 	list->size--;
@@ -365,6 +328,7 @@ void initAdjGraph(AdjGraph * adjGraph, int size)
 	adjGraph->isEmpty = isEmptyAdjGraph;
 	adjGraph->display = displayAdjGraph;
 	adjGraph->insert = insert;
+	adjGraph->radiusOfTree = radiusOfTree;
 }
 
 int isEmptyAdjGraph(AdjGraph * adjGraph)
@@ -399,4 +363,60 @@ void insert(AdjGraph * adjGraph, int u, int v, int weight)
 //	adjGraph->adj[v] = createNode(u, weight, NULL, adjGraph->adj[v]);
 
 	return ;
+}
+
+int radiusOfTree(AdjGraph * adjGraph)
+{
+	List * list = createList();
+	int * visited = (int *)malloc(sizeof(int) * adjGraph->size);
+	memset(visited, 0, sizeof(int) * adjGraph->size);
+	
+	int result = 0;
+
+	for(int i = 0; i < adjGraph->size; i++)
+	{
+		list->pushRear(list, i, 0);
+//		fprintf(stdout, "\ti : %d\n", i);
+
+		for(;;)
+		{
+			int weight = list->head->weight;
+			int j = list->popFront(list);
+//			fprintf(stdout, "\t\tj : %d\n", j);
+			
+			visited[j] = 1;
+
+			for(Node * temp = adjGraph->adj[j]; temp != NULL; temp = temp->next)
+			{
+				if(visited[*((int *)temp->data)] == 0)
+				{
+					list->pushRear(list, *((int *)temp->data), weight + temp->weight);
+					if(adjGraph->max_weight[i] < weight + temp->weight) 
+						adjGraph->max_weight[i] = weight + temp->weight;
+				}
+			}
+
+			if(list->isEmpty(list)) break;
+		}
+		memset(visited, 0, sizeof(int) * adjGraph->size);
+	}
+
+	free(list);
+
+//	fputs("max_weight[]\n", stdout);
+//	for(int i = 0; i < adjGraph->size; i++)
+//	{
+//		fprintf(stdout, "%4d", adjGraph->max_weight[i]);
+//	}
+//	fputc('\n', stdout);
+
+	result = adjGraph->max_weight[0];
+
+	for(int i = 0; i < adjGraph->size; i++)
+	{
+		if(result < adjGraph->max_weight[i])
+			result = adjGraph->max_weight[i];
+	}
+
+	return result;
 }
